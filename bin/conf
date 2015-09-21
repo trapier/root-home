@@ -1,0 +1,19 @@
+#!/bin/bash
+
+conf ()
+{
+    if [[ -z $1 ]]; then 
+	echo "usage: conf interface_name"
+	echo "edits files in /etc/network/interfaces.d/"
+	echo "and then reloads config"
+	exit 1
+    fi
+    
+    file=/etc/network/interfaces.d/$1;
+    old_mtime=$(stat -c %Y $file);
+    vi $file;
+    cur_mtime=$(stat -c %Y $file);
+    if [[ $cur_mtime -gt $old_mtime ]]; then
+        ifup $1;
+    fi
+}
